@@ -1,0 +1,27 @@
+구현 내용 /rest
+1. 주택 실거래가 검색 구현 
+	1) 기간별 검색 GET:/house/term/2021-10-10 : 2021년 10월 10일 이후 거래된 실거래 검색 
+	2) 동별 검색   GET:/house/search/dongcode/~ : ~코드의 동에 해당하는 실거래 검색
+	3) 아파트별 검색 GET:/house/search/housedeal/~ : ~코드에 해당하는 아파트 검색
+
+2. 회원 관리 구현
+	1) 회원 정보 등록 POST:/user/join
+	2) 회원 정보 수정 PUT: /user/modify
+	3) 회원 정보 삭제 DELETE: /user/delete/{memberid}
+	4) 회원 정보 검색(전체,아이디, 이름)GET: /admin/search, GET: /admin/{option}/{word} - 관리자용 페이지
+	5) 비밀번호 찾기 GET: /user/findpwd
+	6) 로그인 로그아웃 POST: /user/login, GET: /user/logout
+	7) 회원 정보 조회 GET: /info/{memberid}
+
+3. 관심 지역 정보 구현
+	1) 관심지역 추가 POST:/house/interest
+	2) 로그인 회원기준 관심지역 제공 GET:/house/interest (로그인 회원이 체크한 관심지역만 출력)
+	
+4. 공지사항
+	1) 입력 POST: /notice/write
+	2) 수정 PUT: /notice/modify
+	3) 삭제 DELETE: /notice/delete/{no}
+	4) 조회 GET: /notice/article/{no}
+	5) 목록 GET: /notice/list
+
+

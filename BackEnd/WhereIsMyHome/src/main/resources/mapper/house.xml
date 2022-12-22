@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.house.mapper.HouseMapper">
+
+	<resultMap id="houseInfoRespDto" type="HouseInfoRespDto">
+		<association property="dongCode" javaType="DongCode">
+			<result property="dongCode" column="dongCode" />
+			<result property="sidoName" column="sidoName" />
+			<result property="gugunName" column="gugunName" />
+			<result property="dongName" column="dongName" />
+		</association>
+		<association property="houseInfo" javaType="HouseInfo">
+			<result property="aptCode" column="aptCode" />
+			<result property="buildYear" column="buildYear" />
+			<result property="roadName" column="roadName" />
+			<result property="roadNameBonbun" column="roadNameBonbun" />
+			<result property="roadNameBubun" column="roadNameBubun" />
+			<result property="roadNameSeq" column="roadNameSeq" />
+			<result property="roadNameBasementCode"
+				column="roadNameBasementCode" />
+			<result property="roadNameCode" column="roadNameCode" />
+			<result property="dong" column="dong" />
+			<result property="bonbun" column="bonbun" />
+			<result property="bubun" column="bubun" />
+			<result property="sigunguCode" column="sigunguCode" />
+			<result property="eubmyundongCode" column="eubmyundongCode" />
+			<result property="dongCode" column="dongCode" />
+			<result property="landCode" column="landCode" />
+			<result property="apartmentName" column="apartmentName" />
+			<result property="jibun" column="jibun" />
+			<result property="lng" column="lng" />
+			<result property="lat" column="lat" />
+		</association>
+		<association property="houseDeal" javaType="HouseDeal">
+			<result property="no" column="no" />
+			<result property="aptCode" column="aptCode" />
+			<result property="dealAmount" column="dealAmount" />
+			<result property="dealYear" column="dealYear" />
+			<result property="dealMonth" column="dealMonth" />
+			<result property="dealDay" column="dealDay" />
+			<result property="area" column="area" />
+			<result property="floor" column="floor" />
+			<result property="cancelDealType" column="cancelDealType" />
+		</association>
+
+	</resultMap>
+
+
+
+	<select id="selectAllByDongCode" resultType="HouseInfo">
+		SELECT *
+		FROM houseinfo
+		WHERE dongCode in(
+		<foreach collection="dongList" item="dong" separator=",">
+			#{dong}
+		</foreach>
+		)
+	</select>
+
+	<select id="searchHouseDeal" resultType="HouseDeal">
+		SELECT *
+		FROM housedeal
+		WHERE housedeal.aptCode = #{aptCode}
+		ORDER BY dealYear
+		DESC, dealMonth
+		DESC,
+		dealDay DESC
+	</select>
+
+	<select id="searchTerm" resultMap="houseInfoRespDto">
+		SELECT *
+		FROM dongcode dc
+		JOIN
+		houseinfo hi ON
+		dc.dongCode=hi.dongCode
+		JOIN housedeal hd ON
+		hi.aptCode=hd.aptCode
+		WHERE dc.dongCode = #{dong}
+		ORDER BY dealYear
+		DESC, dealMonth DESC,
+		dealDay DESC
+	</select>
+
+	<select id="getUserInterestArea" resultType="HouseInfo">
+		select * from
+		houseinfo join (SELECT aptCode FROM interestarea where memberid=
+		#{memberid}) interest where houseinfo.aptCode = interest.aptCode;
+
+	</select>
+
+
+	<insert id="addUserInterestArea">
+		insert IGNORE into interestarea (aptCode,memberid)
+		values
+		(#{aptCode},#{memberid})
+	</insert>
+
+	<delete id="deleteUserInterestArea">
+		delete from interestarea where (aptCode = #{aptCode})
+		and (memberid = #{memberid});
+	</delete>
+
+	<select id="searchSido" resultType="string">
+		SELECT distinct sidoName FROM
+		dongcode;
+	</select>
+
+	<select id="searchGugun" resultType="string">
+		SELECT distinct gugunName
+		FROM dongcode where sidoName = #{sidoName};
+	</select>
+
+	<select id="searchDong" resultType="DongCode">
+		SELECT distinct * FROM
+		dongcode where sidoName = #{sidoName} and gugunName = #{gugunName} and
+		dongName is not null;
+	</select>
+</mapper>
+

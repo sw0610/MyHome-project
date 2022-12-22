@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+<mapper namespace="com.user.mapper.UserMapper">
+
+	<!-- 회원 가입 -->
+	<insert id="join" parameterType="User">
+		insert into member(memberid, pwd, email,name, createdate, auth, confirm_question, confirm_ans)
+		values(#{memberid}, #{pwd}, #{email}, #{name}, current_timestamp(), default, #{confirm_question}, #{confirm_ans})
+	</insert> 
+	
+	<!-- 회원 정보 가져오기 -->
+	<select id="checkInfo" parameterType="String" resultType="User">
+		select memberid, pwd, email, name, auth
+		from member
+		where memberid=#{memberid}
+	</select>
+	
+	<!-- 회원 정보 수정 -->
+	<update id="modify" parameterType="User">
+		update member
+		set pwd=#{pwd}, name=#{name}, email=#{email}
+		where memberid=#{memberid}
+	</update>
+	
+	<!-- 회원 삭제 -->
+	<delete id="delete" parameterType="string">
+		delete from member
+		where memberid=#{memberid}
+	</delete>
+	
+	<!-- 비밀번호 찾기 -->
+	<select id="findPwd" parameterType="string" resultType="string">
+		select pwd
+		from member
+		where memberid=#{memberid}
+	</select>
+	
+	<!-- 로그인 -->
+	<select id="login" parameterType="User" resultType="User">
+		select memberid, name, email, auth
+		from member
+		where memberid=#{memberid} and pwd=#{pwd}
+	</select>
+	
+	<!-- 모든 회원 정보 -->
+	<select id="getAll" resultType="User">
+		select *
+		from member
+	</select>
+	
+	<!-- 검색 -->
+	<select id="search" resultType="User" parameterType="hashmap">
+		select * from member
+		<where>
+			<choose>
+				<when test="option!=null and option=='memberid'">
+					memberid like concat('%',#{word},'%')
+					order by memberid
+				</when>
+				<when test="option!=null and option=='name'">
+					name like concat('%',#{word},'%')
+					order by name
+				</when>
+			</choose>
+		</where>
+	</select>
+	
+	<select id="getRefreshToken" parameterType="string" resultType="string">
+		select token
+		from member
+		where memberid = #{memberid}
+	</select>
+	
+	<update id="saveRefreshToken" parameterType="map">
+		update member
+		set token = #{token}
+		where memberid = #{memberid}
+	</update>
+	
+	<update id="deleteRefreshToken" parameterType="map">
+		update member
+		set token = #{token, jdbcType=VARCHAR}
+		where memberid = #{memberid}
+	</update>
+	
+	<select id="confirmPwd" parameterType="User" resultType="User">
+		select confirm_question, confirm_ans
+		from member
+		where memberid=#{memberid} and email=#{email}
+	</select>
+	
+	<update id="updatePwd" parameterType="User">
+		update member
+		set pwd=#{pwd}
+		where memberid=#{memberid}
+	</update>
+</mapper>
